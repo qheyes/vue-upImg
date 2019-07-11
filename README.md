@@ -1,27 +1,18 @@
 # vue-upImg
-这是一个用于PC端的相册上传的vue组件
+这是一个用于PC端的相册上传的vue组件,可点击html页面直接查看效果。该项目也完成vue组件（Update.vue）,可直接用于项目中。
 
 ---
+## 优点
 
-我发现大部分UI框架在多图片上传和预览的时候
-
-选中的时候就已经发给后台了
-
-而在预览的时候是请求后台返回渲染
+在发送图片数据前,可以提前渲染预览,并删除,添加和拖拽。减少请求重复发送的次数。
 
 ---
-
-但是本组件它可以在预览之后再选择修改已经选中的图片
-
----
-
-
 
 ## 功能实现
 
 拖拽多个文件和input选择单个文件实现选中和预览。
 
-右上角的红色小×号可以取消选中。
+鼠标放置在图片上会显示删除按钮。
 
 如果是非图片文件，会被筛选，同时限制图片上传个数。
 
@@ -37,8 +28,7 @@ axios的方式提交formdata。
 "axios": "^0.19.0",
 "vue": "^2.5.2",
 ```
-采用cdn外链引入到upImg.html文件中
-
+采用cdn外链引入到upImg.html文件中,具体项目请先安装好axios和后台数据接口在测试。
 
 
 ## 预览效果
@@ -47,9 +37,47 @@ axios的方式提交formdata。
 
 ![](https://raw.githubusercontent.com/qheyes/vue-upImg/master/img/update2.png)
 
+## 功能主要代码
 
+```vue
+  //遍历数组
+  filesList(files){
+    for (let i = 0; i < files.length; i++) {
+      canupList=["image/gif","image/jpeg","image/png","image/x-icon"];
+      if(canupList.indexOf(files[i].type)===-1){continue;}
+      this.fileAdd(files[i]);
+    }
+  },
+  //添加到渲染列表
+  fileAdd(file){
+    this.size = this.size + file.size;//总大小
+    let reader = new FileReader();
+    let that = this; 
+    reader.readAsDataURL(file);
+    reader.onload = function(){
+      file.src = this.result;
+      that.imgList.push({
+        file
+      });
+    }
+  },
+  //单文件上传
+  updateImg(el){
+    if (!el.target.files[0].size) return;
+    if(this.imgList.length >= this.maxNumber){
+      alert("已经超出张数！！！")    
+      return;
+    }else{
+      this.filesList(el.target.files);
+    }     
+  },
+  //删除图片
+  delImg(index){
+    this.size = this.size - this.imgList[index].file.size;//总大小
+    this.imgList.splice(index, 1);
+  }
 
-
+```
 
 ## 后台对接示例
 
@@ -87,5 +115,5 @@ class Add_album(APIView):
 
 ##### 推荐联系方式
 
- 私信b站账号
+ 暂无
 
