@@ -37,6 +37,36 @@ axios的方式提交formdata。
 
 ![](https://raw.githubusercontent.com/qheyes/vue-upImg/master/img/update2.png)
 
+## 数据上传讲解
+
+请先启动自己的后台数据库,并写好相应的接口,替换代码中的接口位置
+
+```javascript
+
+postData(){
+      if(!this.title.trim()){
+        alert("当前标题为空请输入标题！")
+        return;
+      }
+      if(this.imgList.length < 1){
+        alert("请至少选择一张图片上传")
+        return
+      }
+      var formData= new FormData();  
+      this.imgList.forEach((value, index) => {
+        formData.append("file" + index, value.file);
+      });
+      formData.append("length", this.imgList.length);
+      formData.append("title", this.title);     
+      this.$axios.post("请填写自己的后台接口",formData,{
+        headers:{'Content-Type':'multipart/form-data'}
+      }).then(res => {
+        alert(res.data.msg)
+      })
+    } 
+
+```
+
 ## 功能主要代码
 
 ```javascript
