@@ -20,22 +20,14 @@
 
 axios的方式提交formdata。
 
+## 使用教程
+vue项目中使用前,请先确认 main.js 内是否引入了axios并且将放到Vue原型链下, 如下：
 
+``` javascript
+Vue.prototype.$axios = axios;
 
-## 版本参考
-
-```json
-"axios": "^0.19.0",
-"vue": "^2.5.2",
 ```
-采用cdn外链引入到upImg.html文件中,具体项目请先安装好axios和后台数据接口在测试。
 
-
-## 预览效果
-
-![](https://raw.githubusercontent.com/qheyes/vue-upImg/master/img/update1.png)
-
-![](https://raw.githubusercontent.com/qheyes/vue-upImg/master/img/update2.png)
 
 ## 数据上传讲解
 
@@ -66,6 +58,22 @@ postData(){
     } 
 
 ```
+
+## 版本参考
+
+```json
+"axios": "^0.19.0",
+"vue": "^2.5.2",
+```
+采用cdn外链引入到upImg.html文件中,具体项目请先安装好axios和后台数据接口在测试。
+
+
+## 预览效果
+
+![](https://raw.githubusercontent.com/qheyes/vue-upImg/master/img/update1.png)
+
+![](https://raw.githubusercontent.com/qheyes/vue-upImg/master/img/update2.png)
+
 
 ## 功能主要代码
 
