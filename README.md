@@ -43,9 +43,9 @@ axios的方式提交formdata。
 
 ## 预览效果
 
-![](https://raw.githubusercontent.com/nanarino/vue-upImg/master/img/exp.png)
+![](https://raw.githubusercontent.com/nanarino/vue-upImg/master/img/update1.png)
 
-![](https://raw.githubusercontent.com/nanarino/vue-upImg/master/img/exp2.png)
+![](https://raw.githubusercontent.com/nanarino/vue-upImg/master/img/update2.png)
 
 
 
