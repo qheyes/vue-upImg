@@ -39,7 +39,7 @@ axios的方式提交formdata。
 
 ## 功能主要代码
 
-```vue
+```javascript
   //遍历数组
   filesList(files){
     for (let i = 0; i < files.length; i++) {
