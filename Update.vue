@@ -2,10 +2,10 @@
   <div class="update">
     <div class="allbtn">
       <div class="show-btn" @click="showBox">点击上传</div>
-      <div class="photos-btn" @click="alerts">查看相册</div>
+      <!-- <div class="photos-btn" @click="alerts">查看相册</div> -->
     </div>
     <div class="upimg" v-show="isShow">
-      <h1>图片上传组件2.0版
+      <h1>图片上传组件2.0.1版
         <i class="iconfont icon-guanbi off-btn" @click="hideBox"></i>
       </h1>
       <div class="title">
@@ -16,6 +16,10 @@
         <div class="shuju">
           <span>当前张数：{{this.imgList.length}} / {{this.maxNumber}} 张</span>
           <span>当前大小：{{this.bySize}}</span>
+        </div>
+        <div class="progress">
+          当前进度
+          <span :style="{width:progress}"></span>
         </div>
         <div class="btn" @click="postData">
           <i class="iconfont icon-ic_image_upload"></i>
@@ -55,6 +59,7 @@
           <i class="iconfont icon-tianjia"></i>
           <span>点击添加或拖拽图片</span>
         </div>
+  
       </div>
     </div>
   </div>
@@ -69,7 +74,8 @@
         title: '',
         maxNumber: 9,
         imgList: [],
-        size: 0            
+        size: 0,  
+        progress: "0%" 
       }
     },
     methods: {
@@ -139,7 +145,7 @@
         this.size = this.size - this.imgList[index].file.size;//总大小
         this.imgList.splice(index, 1);
       },
-      postData(){
+       postData(){
         if(!this.title.trim()){
           alert("当前标题为空请输入标题！")
           return;
@@ -148,18 +154,41 @@
           alert("请至少选择一张图片上传")
           return
         }
+
         var formData= new FormData();  
+        //配置axios上传文件
+        let config = {
+          //添加请求头 
+          headers:{'Content-Type':'multipart/form-data'},
+          //添加上传进度监听事件 
+          onUploadProgress: e => {
+            var completeProgress = ((e.loaded / e.total * 100) | 0) + "%";
+            this.progress = completeProgress;
+            // console.log(this.progress);           
+          }
+        };
+
         this.imgList.forEach((value, index) => {
           formData.append("file" + index, value.file);
         });
         formData.append("length", this.imgList.length);
-        formData.append("title", this.title);     
-        this.$axios.post("http://127.0.0.1:8000/addAlbum/",formData,{
-          headers:{'Content-Type':'multipart/form-data'}
-        }).then(res => {
-          alert(res.data.msg)
-        })
-      } 
+        formData.append("title", this.title);    
+
+        this.$axios.post("http://127.0.0.1:8000/addAlbum/",
+        formData,
+        config
+        ).then(res => {
+          
+          // console.log(res);
+          if(res.data.msg === "发表成功" && this.progress === "100%"){
+            alert("图片上传成功");
+            this.imgList = [];
+            this.title = '';
+            this.size = 0; 
+            this.progress = "0%" ;
+          }         
+        })       
+      }
     },
     computed: {
       //计算大小
@@ -176,6 +205,7 @@
 
 <style scoped>
 
+*{margin: 0;padding: 0;}
 .update{
   position: relative;
 }
@@ -231,7 +261,7 @@ h1 .off-btn{
   color: #666;
 }
 .title .boxname{
-  width: 550px;
+  width: 500px;
   height: 30px;
 }
 .title .boxname input{
@@ -242,7 +272,7 @@ h1 .off-btn{
   text-indent: 20px;
 }
 .title .shuju{
-  flex: 1;
+  width: 320px;
 }
 .title .shuju span{
   margin-right: 20px;
@@ -257,6 +287,21 @@ h1 .off-btn{
 }
 .title .btn:hover{
   background-color: #4798d6;
+}
+.progress{
+  position: relative;
+  width: 120px;
+  height: 20px;
+  background-color: rgba(0,0, 0, .5);
+  color: #fff;
+  text-align: center;
+}
+.progress span{
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: rgba(173, 255, 47, .8);
+  height: 100%;
 }
 .photobox{
   overflow: hidden;
@@ -347,5 +392,6 @@ h1 .off-btn{
   opacity: 0;
   cursor: pointer;
 }
+
  
 </style>

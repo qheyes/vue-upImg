@@ -17,10 +17,10 @@
   <div class="update">
     <div class="allbtn">
       <div class="show-btn" @click="showBox">点击上传</div>
-      <div class="photos-btn" @click="alerts">查看相册</div>
+      <!-- <div class="photos-btn" @click="alerts">查看相册</div> -->
     </div>
     <div class="upimg" v-show="isShow">
-      <h1>图片上传组件2.0版
+      <h1>图片上传组件2.0.1版
         <i class="iconfont icon-guanbi off-btn" @click="hideBox"></i>
       </h1>
       <div class="title">
@@ -31,6 +31,10 @@
         <div class="shuju">
           <span>当前张数：{{this.imgList.length}} / {{this.maxNumber}} 张</span>
           <span>当前大小：{{this.bySize}}</span>
+        </div>
+        <div class="progress">
+          当前进度
+          <span :style="{width:progress}"></span>
         </div>
         <div class="btn" @click="postData">
           <i class="iconfont icon-ic_image_upload"></i>
@@ -88,7 +92,8 @@
         title: '',
         maxNumber: 9,
         imgList: [],
-        size: 0            
+        size: 0,  
+        progress: "0%" 
       }
     },
     methods: {
@@ -97,9 +102,6 @@
       },
       hideBox(){
         this.isShow = false;
-      },
-      alerts(){
-        alert("该模块目前未开发！！敬请期待")
       },
       //拖拽三连
       dragenter(el){
@@ -158,6 +160,7 @@
         this.size = this.size - this.imgList[index].file.size;//总大小
         this.imgList.splice(index, 1);
       },
+      //发送数据
       postData(){
         if(!this.title.trim()){
           alert("当前标题为空请输入标题！")
@@ -167,18 +170,42 @@
           alert("请至少选择一张图片上传")
           return
         }
+
         var formData= new FormData();  
+        //配置axios上传文件
+        let config = {
+          //添加请求头 
+          headers:{'Content-Type':'multipart/form-data'},
+          //添加上传进度监听事件 
+          onUploadProgress: e => {
+            var completeProgress = ((e.loaded / e.total * 100) | 0) + "%";
+            this.progress = completeProgress;
+            // console.log(this.progress);           
+          }
+        };
+
         this.imgList.forEach((value, index) => {
           formData.append("file" + index, value.file);
         });
         formData.append("length", this.imgList.length);
-        formData.append("title", this.title);     
-        this.$axios.post("http://127.0.0.1:8000/addAlbum/",formData,{
-          headers:{'Content-Type':'multipart/form-data'}
-        }).then(res => {
-          alert(res.data.msg)
-        })
-      } 
+        formData.append("title", this.title);    
+
+        this.$axios.post("http://127.0.0.1:8000/addAlbum/",
+        formData,
+        config
+        ).then(res => {
+          
+          // console.log(res);
+          if(res.data.msg === "发表成功" && this.progress === "100%"){
+            alert("图片上传成功");
+            this.imgList = [];
+            this.title = '';
+            this.size = 0; 
+            this.progress = "0%" ;
+          }         
+        })       
+      }
+      
     },
     computed: {
       //计算大小
@@ -190,8 +217,8 @@
         return (this.size  / Math.pow(k, i)).toPrecision(3) + ' ' + sizes[i];
       }
     }
-  }
 
+  }
   let vm = new Vue({
     el: "#app",
     components: {

@@ -54,7 +54,7 @@ h1 .off-btn{
   color: #666;
 }
 .title .boxname{
-  width: 550px;
+  width: 500px;
   height: 30px;
 }
 .title .boxname input{
@@ -65,7 +65,7 @@ h1 .off-btn{
   text-indent: 20px;
 }
 .title .shuju{
-  flex: 1;
+  width: 320px;
 }
 .title .shuju span{
   margin-right: 20px;
@@ -80,6 +80,21 @@ h1 .off-btn{
 }
 .title .btn:hover{
   background-color: #4798d6;
+}
+.progress{
+  position: relative;
+  width: 120px;
+  height: 20px;
+  background-color: rgba(0,0, 0, .5);
+  color: #fff;
+  text-align: center;
+}
+.progress span{
+  position: absolute;
+  left: 0;
+  top: 0;
+  background-color: rgba(173, 255, 47, .8);
+  height: 100%;
 }
 .photobox{
   overflow: hidden;
